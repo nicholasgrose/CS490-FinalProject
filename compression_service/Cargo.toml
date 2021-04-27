@@ -10,7 +10,3 @@ edition = "2018"
 rocket = "0.4.7"
 flate2 = "1.0.20"
 regex = "1.4.6"
-[dependencies.rocket_contrib]
-version = "0.4.7"
-default-features = false
-features = ["json"]

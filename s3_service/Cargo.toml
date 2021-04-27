@@ -8,10 +8,3 @@ edition = "2018"
 
 [dependencies]
 rocket = "0.4.7"
-[dependencies.rocket_contrib]
-version = "0.4.7"
-default-features = false
-features = ["json"]
-[dependencies.serde]
-version = "1.0.125"
-features = ["derive"]

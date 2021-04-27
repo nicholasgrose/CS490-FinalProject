@@ -38,11 +38,11 @@ impl<'r, R: Responder<'r>> Responder<'r> for RenameFile<R> {
     }
 }
 
-#[get("/<filename>")]
-fn compress(filename: String) -> Result<RenameFile<NamedFile>, Error> {
-    let mut uncompressed_file = File::open(&filename)?;
+#[get("/<file_name>")]
+fn compress(file_name: String) -> Result<RenameFile<NamedFile>, Error> {
+    let mut uncompressed_file = File::open(&file_name)?;
 
-    let compressed_file_name = format!("{}.gz", &filename);
+    let compressed_file_name = format!("{}.gz", &file_name);
     let compressed_file = File::create(&compressed_file_name)?;
 
     let mut encoder = GzEncoder::new(&compressed_file, COMPRESSION_LEVEL);
@@ -55,19 +55,19 @@ fn compress(filename: String) -> Result<RenameFile<NamedFile>, Error> {
     })
 }
 
-#[get("/<filename>")]
-fn inflate(filename: String) -> Result<RenameFile<NamedFile>, Error> {
-    let compressed_file = File::open(&filename)?;
+#[get("/<file_name>")]
+fn inflate(file_name: String) -> Result<RenameFile<NamedFile>, Error> {
+    let compressed_file = File::open(&file_name)?;
     let mut decoder = GzDecoder::new(&compressed_file);
 
     let gz_regex = Regex::new("^.+\\.gz$").unwrap();
-    let gz_result = gz_regex.find(&filename);
+    let gz_result = gz_regex.find(&file_name);
 
     if let Option::None = gz_result {
         return Err(Error::from(io::ErrorKind::InvalidData));
     }
 
-    let inflated_file_name = String::from(filename.split_at(filename.len() - 3).0);
+    let inflated_file_name = String::from(file_name.split_at(file_name.len() - 3).0);
     let mut inflated_file = File::create(&inflated_file_name)?;
 
     io::copy(&mut decoder, &mut inflated_file)?;
