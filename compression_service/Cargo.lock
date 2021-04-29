@@ -147,6 +147,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "compression_service"
+version = "0.1.0"
+dependencies = [
+ "flate2",
+ "regex",
+ "rocket",
+]
+
+[[package]]
 name = "cookie"
 version = "0.11.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -191,15 +200,6 @@ checksum = "4857fd85a0c34b3c3297875b747c1e02e06b6a0ea32dd892d8192b9ce0813ea6"
 dependencies = [
  "generic-array",
  "subtle",
-]
-
-[[package]]
-name = "cs490_compression_service"
-version = "0.1.0"
-dependencies = [
- "flate2",
- "regex",
- "rocket",
 ]
 
 [[package]]

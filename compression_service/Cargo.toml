@@ -1,5 +1,5 @@
 [package]
-name = "cs490_compression_service"
+name = "compression_service"
 version = "0.1.0"
 authors = ["Nicholas Rose <nicholasgr44@gmail.com>"]
 edition = "2018"
