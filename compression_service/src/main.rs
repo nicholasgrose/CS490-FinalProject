@@ -38,8 +38,25 @@ impl<'r, R: Responder<'r>> Responder<'r> for RenameFile<R> {
     }
 }
 
+// #[get("/<file_name>")]
+// fn compress(file_name: String) -> Result<RenameFile<NamedFile>, Error> {
+//     let mut uncompressed_file = File::open(&file_name)?;
+
+//     let compressed_file_name = format!("{}.gz", &file_name);
+//     let compressed_file = File::create(&compressed_file_name)?;
+
+//     let mut encoder = GzEncoder::new(&compressed_file, COMPRESSION_LEVEL);
+
+//     io::copy(&mut uncompressed_file, &mut encoder)?;
+
+//     Ok(RenameFile {
+//         responder: NamedFile::open(&compressed_file_name)?,
+//         file_name: compressed_file_name,
+//     })
+// }
+
 #[get("/<file_name>")]
-fn compress(file_name: String) -> Result<RenameFile<NamedFile>, Error> {
+fn compress(file_name: String) -> Result<Status, Error> {
     let mut uncompressed_file = File::open(&file_name)?;
 
     let compressed_file_name = format!("{}.gz", &file_name);
@@ -49,10 +66,7 @@ fn compress(file_name: String) -> Result<RenameFile<NamedFile>, Error> {
 
     io::copy(&mut uncompressed_file, &mut encoder)?;
 
-    Ok(RenameFile {
-        responder: NamedFile::open(&compressed_file_name)?,
-        file_name: compressed_file_name,
-    })
+    Ok(Status::Ok)
 }
 
 #[get("/<file_name>")]

@@ -7,9 +7,6 @@ use rocket::response::NamedFile;
 use rocket::http::Status;
 use rocket::Data;
 use std::io::Error;
-use std::io::Read;
-use std::fs::File;
-use std::io;
 
 const UPLOAD_BYTE_LIMIT: u64 = 250_000_000; // Equivalent to 250 MB
 
