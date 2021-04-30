@@ -2,20 +2,20 @@
 
 #[macro_use]
 extern crate rocket;
+extern crate flate2;
+extern crate regex;
 
-use flate2::read::GzDecoder;
-use flate2::write::GzEncoder;
-use flate2::Compression;
-use rocket::response::NamedFile;
-use rocket::response::Responder;
-use rocket::response::Response;
-use rocket::http::Header;
-use rocket::http::Status;
-use rocket::Request;
+use flate2::{read::GzDecoder, write::GzEncoder, Compression};
 use regex::Regex;
-use std::io::Error;
-use std::fs::File;
-use std::io;
+use rocket::{
+    http::{Header, Status},
+    response::{NamedFile, Responder, Response},
+    Request,
+};
+use std::{
+    fs::File,
+    io::{self, Error},
+};
 
 const COMPRESSION_LEVEL: Compression = Compression::new(2);
 
