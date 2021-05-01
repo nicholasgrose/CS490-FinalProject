@@ -43,10 +43,10 @@
 				],
 				"command": ["file_service"]
 			}
-		]
-	},
-    "volumes": {
-        "name": "shared",
-        "emptyDir": {}
-    }
+		],
+		"volumes": {
+			"name": "shared",
+			"emptyDir": {}
+		}
+	}
 }
