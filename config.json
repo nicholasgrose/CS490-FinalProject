@@ -18,10 +18,12 @@
 						"containerPort": 15707
 					}
 				],
-                "volumeMounts": {
-                    "name": "shared",
-                    "mountPath": "/mnt/shared"
-                },
+                "volumeMounts": [
+					{
+						"name": "shared",
+						"mountPath": "/mnt/shared"
+					}
+				],
 				"command": ["compression_service"]
 			},
 			{
@@ -33,10 +35,12 @@
 						"containerPort": 31415
 					}
 				],
-                "volumeMounts": {
-                    "name": "shared",
-                    "mountPath": "/mnt/shared"
-                },
+                "volumeMounts": [
+					{
+						"name": "shared",
+						"mountPath": "/mnt/shared"
+					}
+				],
 				"command": ["file_service"]
 			}
 		]
