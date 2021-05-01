@@ -8,45 +8,38 @@
 		}
 	},
 	"spec": {
-		"containers": [
-			{
+		"containers": [{
 				"name": "compression_service",
 				"image": "compression_service:latest",
 				"imagePullPolicy": "IfNotPresent",
-				"ports": [
-					{
-						"containerPort": 15707
-					}
-				],
-                "volumeMounts": [
-					{
-						"name": "shared",
-						"mountPath": "/mnt/shared"
-					}
-				],
+				"ports": [{
+					"containerPort": 15707
+				}],
+				"volumeMounts": [{
+					"name": "shared",
+					"mountPath": "/mnt/shared"
+				}],
 				"command": ["compression_service"]
 			},
 			{
 				"name": "file_service",
 				"image": "file_service:latest",
 				"imagePullPolicy": "IfNotPresent",
-				"ports": [
-					{
-						"containerPort": 31415
-					}
-				],
-                "volumeMounts": [
-					{
-						"name": "shared",
-						"mountPath": "/mnt/shared"
-					}
-				],
+				"ports": [{
+					"containerPort": 31415
+				}],
+				"volumeMounts": [{
+					"name": "shared",
+					"mountPath": "/mnt/shared"
+				}],
 				"command": ["file_service"]
 			}
 		],
-		"volumes": {
+		"volumes": [
+			{
 			"name": "shared",
 			"emptyDir": {}
-		}
+			}
+		]
 	}
 }
