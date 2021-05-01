@@ -1,8 +1,8 @@
-FROM rust:latest as builder
+FROM rust:alpine as builder
 
 RUN rustup install nightly
 RUN rustup default nightly
-RUN apt install gcc
+RUN apk -U add gzip alpine-sdk
 
 RUN USER=root cargo new --bin compression_service
 WORKDIR /compression_service
@@ -10,35 +10,37 @@ COPY ./Cargo.toml ./Cargo.toml
 RUN cargo build --release
 RUN rm src/*.rs
 
-ADD . ./
+ADD ./ ./
 
 RUN cat Rocket.toml
 RUN rm -r ./target/release/
 RUN cargo build --release
 
-
-FROM debian:buster-slim
+FROM alpine:latest
+ARG PORT=15707
 ARG APP=/usr/src/app
+ARG SHARED=/mnt/shared
 
-RUN apt-get update \
-    && apt-get install -y ca-certificates tzdata \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk -U add gzip
 
-EXPOSE 15707
+EXPOSE ${PORT}
+VOLUME [ ${SHARED} ]
 
 ENV TZ=Etc/UTC \
-    APP_USER=appuser
+    APP_USER=appuser \
+    ROCKET_PORT=${PORT} \
+    PATH=${PATH}:${APP}
 
-RUN groupadd $APP_USER \
-    && useradd -g $APP_USER $APP_USER \
+RUN addgroup -S $APP_USER \
+    && adduser -S $APP_USER -G $APP_USER \
     && mkdir -p ${APP}
 
 COPY --from=builder /compression_service/target/release/compression_service ${APP}/compression_service
-COPY --from=builder /compression_service/Rocket.toml ${APP}/Rocket.toml
 
 RUN chown -R $APP_USER:$APP_USER ${APP}
+RUN chown -R $APP_USER:$APP_USER ${SHARED}
 
 USER $APP_USER
-WORKDIR ${APP}
+WORKDIR ${SHARED}
 
-CMD ["./compression_service"]
+CMD [ "compression_service" ]

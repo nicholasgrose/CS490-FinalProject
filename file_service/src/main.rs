@@ -143,12 +143,12 @@ async fn upload_compressed(path: String, data: Data) -> Result<Status, Error> {
         .get(format!("localhost:15707/compress/{}", &file))
         .send()
         .await?;
-    let compressed_file = format!("{}.gz", &file);
+    // let compressed_file = format!("{}.gz", &file);
 
-    client
-        .post(format!("localhost:62831/store/{}", compressed_file))
-        .send()
-        .await?;
+    // client
+    //     .post(format!("localhost:62831/store/{}", compressed_file))
+    //     .send()
+    //     .await?;
 
     Ok(Status::Ok)
 }
@@ -162,14 +162,14 @@ fn name_from_path(path: &String) -> String {
 async fn upload_uncompressed(path: String, data: Data) -> Result<Status, Error> {
     data.open(250.mebibytes()).into_file(&path).await?;
 
-    let client = reqwest::Client::new();
+    // let client = reqwest::Client::new();
 
-    let file = name_from_path(&path);
+    // let file = name_from_path(&path);
 
-    client
-        .post(format!("localhost:62831/store/{}", file))
-        .send()
-        .await?;
+    // client
+    //     .post(format!("localhost:62831/store/{}", file))
+    //     .send()
+    //     .await?;
 
     Ok(Status::Ok)
 }

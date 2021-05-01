@@ -1,5 +1,3 @@
-#![feature(proc_macro_hygiene, decl_macro)]
-
 #[macro_use]
 extern crate rocket;
 extern crate flate2;
@@ -24,11 +22,11 @@ struct RenameFile<R> {
     file_name: String,
 }
 
-impl<'r, R: Responder<'r>> Responder<'r> for RenameFile<R> {
-    fn respond_to(self, req: &Request) -> Result<Response<'r>, Status> {
+impl<'r, R: Responder<'r, 'static>> Responder<'r, 'static> for RenameFile<R> {
+    fn respond_to(self, request: &'r Request<'_>) -> rocket::response::Result<'static> {
         let mut build = Response::build();
 
-        build.merge(self.responder.respond_to(req)?);
+        build.merge(self.responder.respond_to(request)?);
 
         let new_header = Header::new(
             "Content-Disposition",
@@ -70,7 +68,7 @@ fn compress(file_name: String) -> Result<Status, Error> {
 }
 
 #[get("/<file_name>")]
-fn inflate(file_name: String) -> Result<RenameFile<NamedFile>, Error> {
+async fn inflate(file_name: String) -> Result<RenameFile<NamedFile>, Error> {
     let compressed_file = File::open(&file_name)?;
     let mut decoder = GzDecoder::new(&compressed_file);
 
@@ -87,14 +85,14 @@ fn inflate(file_name: String) -> Result<RenameFile<NamedFile>, Error> {
     io::copy(&mut decoder, &mut inflated_file)?;
 
     Ok(RenameFile {
-        responder: NamedFile::open(&inflated_file_name)?,
+        responder: NamedFile::open(&inflated_file_name).await?,
         file_name: inflated_file_name,
     })
 }
 
-fn main() {
-    rocket::ignite()
+#[launch]
+fn rocket() -> _ {
+    rocket::build()
         .mount("/compress", routes![compress])
         .mount("/inflate", routes![inflate])
-        .launch();
 }
