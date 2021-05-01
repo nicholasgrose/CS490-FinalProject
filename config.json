@@ -2,14 +2,14 @@
 	"kind": "Pod",
 	"apiVersion": "v1",
 	"metadata": {
-		"name": "cs490_final_project",
+		"name": "cs490-final-project",
 		"labels": {
-			"app": "final_project"
+			"app": "final-project"
 		}
 	},
 	"spec": {
 		"containers": [{
-				"name": "compression_service",
+				"name": "compression-service",
 				"image": "compression_service:latest",
 				"imagePullPolicy": "IfNotPresent",
 				"ports": [{
@@ -22,7 +22,7 @@
 				"command": ["compression_service"]
 			},
 			{
-				"name": "file_service",
+				"name": "file-service",
 				"image": "file_service:latest",
 				"imagePullPolicy": "IfNotPresent",
 				"ports": [{
