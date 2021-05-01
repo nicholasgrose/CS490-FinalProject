@@ -14,7 +14,9 @@
 				"image": "compression_service:latest",
 				"imagePullPolicy": "IfNotPresent",
 				"ports": [{
-					"containerPort": 15707
+					"containerPort": 15707,
+					"hostPort": 15707,
+					"nodePort": 15707
 				}],
 				"volumeMounts": [{
 					"name": "shared",
@@ -27,7 +29,9 @@
 				"image": "file_service:latest",
 				"imagePullPolicy": "IfNotPresent",
 				"ports": [{
-					"containerPort": 31415
+					"containerPort": 31415,
+					"hostPort": 31415,
+					"nodePort": 31415
 				}],
 				"volumeMounts": [{
 					"name": "shared",
