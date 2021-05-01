@@ -15,8 +15,7 @@
 				"imagePullPolicy": "IfNotPresent",
 				"ports": [{
 					"containerPort": 15707,
-					"hostPort": 15707,
-					"nodePort": 15707
+					"hostPort": 15707
 				}],
 				"volumeMounts": [{
 					"name": "shared",
@@ -30,8 +29,7 @@
 				"imagePullPolicy": "IfNotPresent",
 				"ports": [{
 					"containerPort": 31415,
-					"hostPort": 31415,
-					"nodePort": 31415
+					"hostPort": 31415
 				}],
 				"volumeMounts": [{
 					"name": "shared",
