@@ -8,16 +8,10 @@ use reqwest::StatusCode;
 use rocket::{
     data::{Data, ToByteUnit},
     http::{Header, Status},
-    response::{
-        NamedFile, Responder,
-    },
+    response::{NamedFile, Responder},
     Request, Response,
 };
-use std::{
-    fs::File,
-    io,
-    path::Path,
-};
+use std::{fs::File, io, path::Path};
 
 pub struct Error(anyhow::Error);
 
@@ -63,21 +57,34 @@ impl<'r, R: Responder<'r, 'static>> Responder<'r, 'static> for RenameFile<R> {
 
 #[get("/<file>")]
 async fn get_file(file: String) -> Result<RenameFile<NamedFile>, Error> {
-    let client = reqwest::Client::new();
     let compressed_file = format!("{}.gz", &file);
-    // File::open(&file)?
-    // AsyncStream::new(rx, generator)
+    // println!("making client");
+    // let client = reqwest::Client::builder();
+    // println!("builder made; making client");
+    // let client = client.build();
+    // println!("checking for err");
+    // if let Err(_) = client {
+    //     println!("FAILED AT PANICKING");
+    //     return Err(Error::from(io::Error::new(
+    //         io::ErrorKind::NotFound,
+    //         "Client failure",
+    //     )));
+    // }
+    // println!("unwrapping");
+    // let client = client.unwrap();
+    // println!("finished making client");
+    reqwest::get("https://tacospin.com/").await?;
 
     if file_exists(&file) {
+        println!("file exists");
         Ok(RenameFile {
             responder: NamedFile::open(&file).await?,
             file_name: file,
         })
     } else if file_exists(&compressed_file) {
-        let response = client
-            .get(format!("localhost:15707/inflate/{}", &compressed_file))
-            .send()
-            .await?;
+        println!("looking for compressed");
+        let response =
+            reqwest::get(format!("localhost:15707/inflate/{}", &compressed_file)).await?;
         let mut inflated_file = &mut File::open(&file)?;
         io::copy(&mut response.text().await?.as_bytes(), &mut inflated_file)?;
         Ok(RenameFile {
@@ -85,10 +92,8 @@ async fn get_file(file: String) -> Result<RenameFile<NamedFile>, Error> {
             file_name: file,
         })
     } else {
-        let s3_response = client
-            .get(format!("localhost:62831/fetch/{}", &file))
-            .send()
-            .await?;
+        println!("checking s3");
+        let s3_response = reqwest::get(format!("localhost:62831/fetch/{}", &file)).await?;
 
         if s3_response.status() == StatusCode::OK {
             return Ok(RenameFile {
@@ -96,11 +101,10 @@ async fn get_file(file: String) -> Result<RenameFile<NamedFile>, Error> {
                 file_name: file,
             });
         }
+        println!("s3: looking for compressed");
 
-        let s3_response = client
-            .get(format!("localhost:62831/fetch/{}", &compressed_file))
-            .send()
-            .await?;
+        let s3_response =
+            reqwest::get(format!("localhost:62831/fetch/{}", &compressed_file)).await?;
 
         if s3_response.status() != StatusCode::OK {
             return Err(Error::from(io::Error::new(
@@ -109,10 +113,8 @@ async fn get_file(file: String) -> Result<RenameFile<NamedFile>, Error> {
             )));
         }
 
-        let response = client
-            .get(format!("localhost:15707/inflate/{}", &compressed_file))
-            .send()
-            .await?;
+        let response =
+            reqwest::get(format!("localhost:15707/inflate/{}", &compressed_file)).await?;
 
         if response.status() != StatusCode::OK {
             return Err(Error::from(io::Error::new(
@@ -160,7 +162,8 @@ fn name_from_path(path: &String) -> String {
 
 #[post("/?<path>", data = "<data>")]
 async fn upload_uncompressed(path: String, data: Data) -> Result<Status, Error> {
-    data.open(250.mebibytes()).into_file(&path).await?;
+    let data = data.open(250.mebibytes());
+    data.into_file(&path).await?;
 
     // let client = reqwest::Client::new();
 
